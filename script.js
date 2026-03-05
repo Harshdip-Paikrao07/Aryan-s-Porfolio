@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════
-// ARYAN CHAVHAN PORTFOLIO - FINAL WORKIN
+// ARYAN CHAVHAN PORTFOLIO - PROPERLY FIXED
 // ═══════════════════════════════════════════════════════════
 
 // ─── MOBILE MENU ───────────────────────────────
@@ -70,7 +70,6 @@ function animateCounter(el) {
     }, 2000 / steps);
 }
 
-// Initialize counter on page load
 window.addEventListener('load', () => {
     let countersStarted = false;
     const statsBar = document.querySelector('.stats-bar');
@@ -80,7 +79,6 @@ window.addEventListener('load', () => {
             entries.forEach(entry => {
                 if (entry.isIntersecting && !countersStarted) {
                     countersStarted = true;
-                    // Delay to let ScrollReveal finish first
                     setTimeout(() => {
                         document.querySelectorAll('.stat-number').forEach(el => {
                             animateCounter(el);
@@ -103,25 +101,18 @@ if (typeof ScrollReveal !== 'undefined') {
         reset: false 
     });
 
-    // Hero section
     ScrollReveal().reveal('.home-content', { origin: 'left', delay: 200 });
     ScrollReveal().reveal('.home-img', { origin: 'right', delay: 200 });
-    
-    // General
     ScrollReveal().reveal('.heading', { origin: 'top' });
-    
-    // About
     ScrollReveal().reveal('.about-img', { origin: 'left' });
     ScrollReveal().reveal('.about-content', { origin: 'right' });
     
-    // Services
     ScrollReveal().reveal('.services-box', { 
         origin: 'bottom', 
         interval: 200, 
         distance: '50px' 
     });
     
-    // Stats bar - THIS IS THE KEY PART
     ScrollReveal().reveal('.stat-item', { 
         origin: 'bottom', 
         interval: 150,
@@ -137,20 +128,22 @@ if (typeof ScrollReveal !== 'undefined') {
         interval: 150
     });
     
-    // Portfolio
+    ScrollReveal().reveal('.portfolio-tab-card', { 
+        origin: 'bottom', 
+        interval: 150, 
+        distance: '40px' 
+    });
+    
     ScrollReveal().reveal('.portfolio-box', { 
         origin: 'bottom', 
         interval: 150, 
         distance: '40px' 
     });
     
-    // Contact
     ScrollReveal().reveal('.contact form', { 
         origin: 'bottom', 
         distance: '40px' 
     });
-} else {
-    console.warn('⚠️ ScrollReveal not loaded. Animations disabled.');
 }
 
 // ─── TYPED.JS ──────────────────────────────────
@@ -172,9 +165,36 @@ if (typeof Typed !== 'undefined') {
             cursorChar: '|'
         });
     }
-} else {
-    console.warn('⚠️ Typed.js not loaded. Typing effect disabled.');
 }
+
+// ─── PORTFOLIO TABS FUNCTIONALITY ──────────────
+document.addEventListener('DOMContentLoaded', () => {
+    const tabCards = document.querySelectorAll('.portfolio-tab-card');
+    const contentAreas = document.querySelectorAll('.portfolio-content');
+
+    tabCards.forEach(card => {
+        card.addEventListener('click', () => {
+            const targetTab = card.getAttribute('data-tab');
+            
+            // Remove active class from all cards
+            tabCards.forEach(c => c.classList.remove('active'));
+            
+            // Add active class to clicked card
+            card.classList.add('active');
+            
+            // Hide all content areas
+            contentAreas.forEach(content => {
+                content.style.display = 'none';
+            });
+            
+            // Show target content
+            const targetContent = document.getElementById(targetTab);
+            if (targetContent) {
+                targetContent.style.display = 'block';
+            }
+        });
+    });
+});
 
 // ─── SMOOTH SCROLL ─────────────────────────────
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -192,7 +212,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// ─── CONTACT FORM (EmailJS) ────────────────────
+// ─── CONTACT FORM - EMAILJS ────────────────────
 const EMAILJS_SERVICE_ID  = 'service_aubtu3r';
 const EMAILJS_TEMPLATE_ID = 'template_qmtzim8';
 const EMAILJS_PUBLIC_KEY  = 'jTYc4B5900yg4toK3';
@@ -201,9 +221,8 @@ const EMAILJS_PUBLIC_KEY  = 'jTYc4B5900yg4toK3';
     const s = document.createElement('script');
     s.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
     s.onload = () => {
-        if (EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
-            emailjs.init(EMAILJS_PUBLIC_KEY);
-        }
+        emailjs.init(EMAILJS_PUBLIC_KEY);
+        console.log('✅ EmailJS initialized!');
     };
     document.head.appendChild(s);
 })();
@@ -245,34 +264,23 @@ if (contactForm) {
             submitBtn.disabled = true;
         }
 
-        // Demo mode if EmailJS not configured
-        if (EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
-            setTimeout(() => {
-                showMsg(successMsg);
-                contactForm.reset();
-                if (submitBtn) {
-                    submitBtn.textContent = 'Send Message';
-                    submitBtn.disabled = false;
-                }
-            }, 1000);
-            return;
-        }
-
-        // Real EmailJS send
         try {
             await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
                 from_name: name, 
                 from_email: email,
                 phone: mobile, 
-                subject, 
-                message,
-                to_name: 'Aryan Chavhan'
+                subject: subject,
+                message: message
             });
+            
+            console.log('✅ Email sent!');
             showMsg(successMsg);
             contactForm.reset();
+            
         } catch(err) {
-            console.error(err);
+            console.error('❌ Error:', err);
             showMsg(errorMsg);
+            
         } finally {
             if (submitBtn) {
                 submitBtn.textContent = 'Send Message';
@@ -298,4 +306,4 @@ window.addEventListener('load', () => {
     });
 });
 
-console.log('✅ Portfolio script loaded successfully!');
+console.log('✅ Portfolio loaded - Tabs working perfectly!');
